@@ -1,0 +1,140 @@
+﻿<phone:PhoneApplicationPage
+    x:Class="SmallNote.MapPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
+    xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    FontFamily="{StaticResource PhoneFontFamilyNormal}"
+    FontSize="{StaticResource PhoneFontSizeNormal}"
+    Foreground="{StaticResource PhoneForegroundBrush}"
+    SupportedOrientations="Portrait" Orientation="Portrait"
+    mc:Ignorable="d"
+    shell:SystemTray.IsVisible="True"
+    xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
+    xmlns:mapCtrl="clr-namespace:Microsoft.Phone.Controls.Maps;assembly=Microsoft.Phone.Controls.Maps"
+    xmlns:gMapEx="clr-namespace:SmallNote"
+    xmlns:device="clr-namespace:System.Device.Location;assembly=System.Device"
+
+
+    >
+
+
+    <!-- 画面に入ってきた時のアニメーション -->
+    <toolkit:TransitionService.NavigationInTransition>
+        <toolkit:NavigationInTransition>
+            <toolkit:NavigationInTransition.Backward>
+                <toolkit:TurnstileTransition Mode="BackwardIn"/>
+            </toolkit:NavigationInTransition.Backward>
+            <toolkit:NavigationInTransition.Forward>
+                <toolkit:TurnstileTransition Mode="ForwardIn"/>
+            </toolkit:NavigationInTransition.Forward>
+
+        </toolkit:NavigationInTransition>
+    </toolkit:TransitionService.NavigationInTransition>
+
+    <!-- 画面から出ていく時のアニメーション -->
+    <toolkit:TransitionService.NavigationOutTransition>
+        <toolkit:NavigationOutTransition>
+            <toolkit:NavigationOutTransition.Backward>
+                <toolkit:TurnstileTransition Mode="BackwardOut"/>
+            </toolkit:NavigationOutTransition.Backward>
+            <toolkit:NavigationOutTransition.Forward>
+                <toolkit:TurnstileTransition Mode="ForwardOut"/>
+            </toolkit:NavigationOutTransition.Forward>
+        </toolkit:NavigationOutTransition>
+    </toolkit:TransitionService.NavigationOutTransition>
+
+
+
+    <phone:PhoneApplicationPage.Resources>
+
+        <!--現在地マークのスタイルテンプレート-->
+        <ControlTemplate x:Key="PushpinControlTemplate" TargetType="mapCtrl:Pushpin">
+            <Grid Name="ContentGrid" Width="50" Height="60" >
+                <Path UseLayoutRounding="False" Opacity="0.7" Stroke="White" Fill="#FF000000" StrokeThickness="3">
+                    <Path.Data>
+                        <GeometryGroup>
+                            <EllipseGeometry Center="25 37" RadiusX="15" RadiusY="15" />
+                            <EllipseGeometry Center="25 37" RadiusX="5" RadiusY="5" />
+                            <EllipseGeometry Center="25 37" RadiusX="3" RadiusY="3" />
+                            <EllipseGeometry Center="25 37" RadiusX="0" RadiusY="0" />
+                        </GeometryGroup>
+                    </Path.Data>
+                </Path>
+            </Grid>
+        </ControlTemplate>
+
+    </phone:PhoneApplicationPage.Resources>
+
+
+    <!--LayoutRoot は、すべてのページ コンテンツが配置されるルート グリッドです-->
+    <Grid x:Name="LayoutRoot" Background="Transparent">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!--ContentPanel - 追加コンテンツをここに入力します-->
+        <!--ContentPanel - 追加コンテンツをここに入力します-->
+        <Grid x:Name="ContentPanel" Grid.Row="1" Margin="0,0,0,75" >
+            <mapCtrl:Map Name="MyMap" Culture="ja-JP" ScaleVisibility="Visible" HorizontalAlignment="Left" CredentialsProvider="ApMty9zeMaqh7h_Q196f5_F0KHDTaw58JUXca_l-6O6YlDv_veu0RjDUwjqUhBy7" ZoomBarVisibility="Collapsed" Width="480" ZoomLevel="16"  Background="White">
+
+                <mapCtrl:Map.Center>
+                    <device:GeoCoordinate Altitude="NaN" Course="NaN" HorizontalAccuracy="NaN" Latitude="34.701189" Longitude="135.496016" Speed="NaN" VerticalAccuracy="NaN" />
+                </mapCtrl:Map.Center>
+
+                <mapCtrl:MapTileLayer Name="MapTileLayer_gMap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="480">
+                    <mapCtrl:MapTileLayer.TileSources>
+                        <gMapEx:GoogleTileSource TileSourceType="Street" />
+                    </mapCtrl:MapTileLayer.TileSources>
+                </mapCtrl:MapTileLayer>
+
+                <mapCtrl:Pushpin Name="CurrentMark" Location="34.701189,135.496016" Template="{StaticResource PushpinControlTemplate}" Margin="0,-13,0,0" Background="{StaticResource PhoneAccentBrush}" AllowDrop="False">
+                    <mapCtrl:Pushpin.RenderTransform>
+                        <RotateTransform x:Name="CurrentMarkRotate" CenterX="25" CenterY="37"/>
+                    </mapCtrl:Pushpin.RenderTransform>
+                </mapCtrl:Pushpin>
+
+                <mapCtrl:MapItemsControl Name="MapItemsControl_PushPins" ItemsSource="{Binding Notes}">
+                    <mapCtrl:MapItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <mapCtrl:Pushpin Location="{Binding Location}" IsHitTestVisible="True" Background="{StaticResource PhoneAccentBrush}" Foreground="White" DoubleTap="Pushpin_DoubleTap" >
+                                <mapCtrl:Pushpin.Content>
+                                    <TextBlock Name="TextBlock_Pin_Name" Text="{Binding Title}"/>
+                                </mapCtrl:Pushpin.Content>
+
+                            </mapCtrl:Pushpin>
+                        </DataTemplate>
+                    </mapCtrl:MapItemsControl.ItemTemplate>
+                </mapCtrl:MapItemsControl>
+
+            </mapCtrl:Map>
+            <Grid Name="Grid_ZoomUp" Width="70" Height="70" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,190,0,0" Tap="Image_ZoomUp_Tap">
+                <Rectangle Fill="{StaticResource PhoneAccentBrush}" OpacityMask="#83000000" />
+                <Image Source="/Icons/appbar.magnify.add.png" />
+            </Grid>
+            <Grid Name="Grid_GPSStatus" Width="70" Height="70" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0" Tap="Image_ZoomUp_Tap">
+                <Rectangle Fill="{StaticResource PhoneAccentBrush}" OpacityMask="#83000000" />
+                <Image Source="/Icons/appbar.connection.quality.nosignal.dark.png" Margin="0,2,33,38" Height="30" />
+                <TextBlock Name="TextBlock_GPSStatus" Text="NoData" Foreground="White" TextWrapping="NoWrap" FontSize="20" VerticalAlignment="Bottom" TextAlignment="Center" Margin="7,0,0,18"/>
+            </Grid>
+            <Grid Name="Grid_ZoomDown" Width="70" Height="70" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,270,0,0" Tap="Image_ZoomDown_Tap" Grid.Row="1">
+                <Rectangle Fill="{StaticResource PhoneAccentBrush}" OpacityMask="#83000000" />
+                <Image Source="/Icons/appbar.magnify.minus.png" />
+            </Grid>
+            <Grid Name="Grid_GoCurrentLocation" Width="70" Height="70" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,350,0,0" Tap="Image_MoveToCurrent_Tap">
+                <Rectangle Fill="{StaticResource PhoneAccentBrush}" OpacityMask="#83000000" />
+                <Image Source="/Icons/appbar.location.circle.png" Width="60" Height="60" />
+            </Grid>
+        </Grid>
+
+    </Grid>
+
+    <phone:PhoneApplicationPage.ApplicationBar>
+        <shell:ApplicationBar IsVisible="True" IsMenuEnabled="True" Opacity="0.7" >
+            <shell:ApplicationBarIconButton x:Name="Appbar_MainPageButton" IconUri="/Icons/appbar.list.two.png" Text="List" Click="GoMainPageButton_Click" />
+        </shell:ApplicationBar>
+    </phone:PhoneApplicationPage.ApplicationBar>
+</phone:PhoneApplicationPage>

@@ -1,0 +1,15 @@
+﻿This is a simple and lightweight application for taking notes with your location data.
+
+Location data and time which the note was created are recorded together in the note, so when you review the notes later, you can remember "when" and "where" you write the note.
+
+You can share your note with your friends easily.
+For example, if you found awesome restaurant,you can tell your friends the name and location of the restaurant by send email(SMS) or via social networking services. 
+
+
+
+このアプリケーションはメモを位置情報と一緒に記録する機能を持った、シンプルで軽量なアプリです。
+
+メモ作成時の位置情報と時刻を一緒に記録するので、あとでメモを見返したときにそれを「いつ」「どこで」書いたのかを思い出す助けになります。
+
+メモの内容を友人と簡単にシェアすることもできます。
+たとえば、いいレストランを見つけたら、そのレストランの名前や場所をEメールやSNSを通じて簡単に友達に送ることができます。

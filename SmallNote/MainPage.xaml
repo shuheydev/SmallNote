@@ -1,0 +1,134 @@
+﻿<phone:PhoneApplicationPage 
+    x:Class="SmallNote.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
+    xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d" d:DesignWidth="480" d:DesignHeight="696"
+    FontFamily="{StaticResource PhoneFontFamilyNormal}"
+    FontSize="{StaticResource PhoneFontSizeNormal}"
+    Foreground="{StaticResource PhoneForegroundBrush}"
+    SupportedOrientations="Portrait" Orientation="Portrait"
+    shell:SystemTray.IsVisible="True"
+    xmlns:controls="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls"
+    xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
+
+    >
+
+    <!-- 画面に入ってきた時のアニメーション -->
+    <toolkit:TransitionService.NavigationInTransition>
+        <toolkit:NavigationInTransition>
+            <toolkit:NavigationInTransition.Backward>
+                <toolkit:TurnstileTransition Mode="BackwardIn"/>
+            </toolkit:NavigationInTransition.Backward>
+            <toolkit:NavigationInTransition.Forward>
+                <toolkit:TurnstileTransition Mode="ForwardIn"/>
+            </toolkit:NavigationInTransition.Forward>
+
+        </toolkit:NavigationInTransition>
+    </toolkit:TransitionService.NavigationInTransition>
+
+    <!-- 画面から出ていく時のアニメーション -->
+    <toolkit:TransitionService.NavigationOutTransition>
+        <toolkit:NavigationOutTransition>
+            <toolkit:NavigationOutTransition.Backward>
+                <toolkit:TurnstileTransition Mode="BackwardOut"/>
+            </toolkit:NavigationOutTransition.Backward>
+            <toolkit:NavigationOutTransition.Forward>
+                <toolkit:TurnstileTransition Mode="ForwardOut"/>
+            </toolkit:NavigationOutTransition.Forward>
+        </toolkit:NavigationOutTransition>
+    </toolkit:TransitionService.NavigationOutTransition>
+
+    <phone:PhoneApplicationPage.Resources>
+        <CollectionViewSource x:Name="MyCollection" Source="{Binding}"></CollectionViewSource>
+    </phone:PhoneApplicationPage.Resources>
+
+
+    <!--LayoutRoot は、すべてのページ コンテンツが配置されるルート グリッドです-->
+    <Grid x:Name="LayoutRoot" Background="Transparent">
+        <!--ContentPanel - 追加コンテンツをここに入力します-->
+        <Grid x:Name="ContentPanel"  Margin="12,0,10,75">
+            <controls:Pivot Name="Pivot_ListPage" SelectionChanged="Pivot_SelectionChanged">
+                <controls:PivotItem Name="PivotItem1" Header="Notes">
+                    <Grid>
+                        <ListBox x:Name="ListBox_Notes" ItemsSource="{Binding Source={StaticResource MyCollection}}"  HorizontalAlignment="Left" Height="560" Width="434" VerticalAlignment="Top"  SelectionChanged="ListBox_Notes_SelectionChanged" Margin="0,0,0,-136">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <StackPanel Orientation="Horizontal" Margin="0,20,0,0" Height="Auto" Width="430" HorizontalAlignment="Left" VerticalAlignment="Center" DoubleTap="StackPanel_DoubleTap" Background="{StaticResource PhoneBackgroundBrush}">
+                                            <!--コンテキストメニューの定義-->
+                                            <toolkit:ContextMenuService.ContextMenu>
+                                                <toolkit:ContextMenu IsZoomEnabled="true">
+                                                    <toolkit:MenuItem Header="Email" Tap="ContextMenuItemEmail_Tap" />
+                                                    <toolkit:MenuItem Header="SMS" Tap="ContextMenuItemSMS_Tap"/>
+                                                    <toolkit:MenuItem Header="Share" Tap="ContextMenuItemShare_Tap"/>
+                                                    <toolkit:MenuItem Header="Delete" Tap="ContextMenuItemDelete_Tap"/>
+                                                </toolkit:ContextMenu>
+                                            </toolkit:ContextMenuService.ContextMenu>
+                                            <Grid>
+                                                <Rectangle Width="47" Fill="{StaticResource PhoneAccentBrush}"/>
+                                                <Image Width="47" Height="47" Source="/Icons/appbar.check.rest.png" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{Binding Shared}" />
+
+                                            </Grid>
+                                            <StackPanel>
+                                                <TextBlock Text="{Binding Title}" FontSize="28" Margin="5,10,0,0" Width="370" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                                                <TextBlock Text="{Binding Content}" TextWrapping="Wrap" Height="80" Width="350" Margin="15,0,0,0" />
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="{Binding ModifyDate}" Width="240" HorizontalAlignment="Right" TextAlignment="Right"/>
+                                                    <TextBlock Text="{Binding ModifyDayOfWeek}" Width="120" HorizontalAlignment="Right" TextAlignment="Right"/>
+                                                </StackPanel>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                        <TextBlock Name="TextBlock_NoItemSign" TextWrapping="Wrap" Text="No Items" FontSize="40" TextAlignment="Center" Margin="0,179,0,307"/>
+                    </Grid>
+                </controls:PivotItem>
+                <controls:PivotItem Header="Options">
+                    <Grid>
+                        <ListBox>
+                            <TextBlock Text="Search:"/>
+                            <Grid Name="Grid_SearchBox"  Width="420" Margin="10,10,0,0">
+                                <toolkit:PhoneTextBox Hint="Search" Name="TextBox_SearchBox" InputScope="Search" KeyDown="TextBox_Search_KeyDown" Foreground="Black" BorderBrush="Black" Background="White" DoubleTap="TextBox_DoubleTap" />
+                            </Grid>
+                            <TextBlock Text="Sort By:" Margin="0,20,0,0" />
+                            <Grid Name="Grid_SortOption" Margin="0,10,0,0">
+
+                                <StackPanel>
+                                    <RadioButton Name="RadioButton_SortOption_Title" Content="Title" Margin="10,0,0,0" GroupName="Sorting" Checked="RadioButton_SortOption_Checked"/>
+                                    <RadioButton Name="RadioButton_SortOption_Location" Content="Location" Margin="10,0,0,0" GroupName="Sorting" Checked="RadioButton_SortOption_Checked"/>
+                                    <RadioButton Name="RadioButton_SortOption_CreateDate" Content="Created Date" Margin="10,0,0,0" GroupName="Sorting" Checked="RadioButton_SortOption_Checked"/>
+                                    <RadioButton Name="RadioButton_SortOption_ModifyDate" Content="Modified Date" Margin="10,0,0,0" GroupName="Sorting" Checked="RadioButton_SortOption_Checked"/>
+                                    <RadioButton Name="RadioButton_SortOption_OpenDetailDate" Content="Recent Opened" Margin="10,0,0,0" GroupName="Sorting" Checked="RadioButton_SortOption_Checked"/>
+                                    <Button Name="Button_SortOption" Height="75" Width="100" Content="Sort" Tap="Button_SortOption_Tap" Margin="325,0,0,0" Background="{StaticResource PhoneAccentBrush}" BorderBrush="{StaticResource PhoneAccentBrush}" Foreground="White" />
+
+                                </StackPanel>
+                            </Grid>
+                        </ListBox>
+
+
+                    </Grid>
+                </controls:PivotItem>
+            </controls:Pivot>
+
+
+        </Grid>
+    </Grid>
+
+    <phone:PhoneApplicationPage.ApplicationBar>
+        <shell:ApplicationBar IsVisible="True" IsMenuEnabled="True" Opacity="0.7" >
+            <shell:ApplicationBarIconButton x:Name="Appbar_AddButton" IconUri="/Icons/appbar.add.rest.png" Text="Add" Click="AddNewNoteButton_Click" />
+
+            <shell:ApplicationBarIconButton x:Name="Appbar_MapButton" IconUri="/Icons/appbar.map.location.png" Text="Map" Click="MapButton_Click" />
+            <shell:ApplicationBar.MenuItems>
+                <shell:ApplicationBarMenuItem Text="Settings..." Click="AppbarMenu_Settings_Click" />
+                <shell:ApplicationBarMenuItem Text="About..." Click="AppbarMenu_About_Click" />
+            </shell:ApplicationBar.MenuItems>
+        </shell:ApplicationBar>
+    </phone:PhoneApplicationPage.ApplicationBar>
+</phone:PhoneApplicationPage>
